@@ -1,0 +1,226 @@
+{
+	"flow_name" : "CLASSIFICATION_MODEL",
+	"steps" : [
+		{
+			"class" : "weka.knowledgeflow.steps.Classifier",
+			"properties" : {
+				"classifier" : {
+					"type" : "optionHandler",
+					"class" : "weka.classifiers.trees.RandomForest",
+					"options" : "-P 100 -I 100 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1"
+				},
+				"loadClassifierFileName" : "",
+				"name" : "RandomForest",
+				"resetIncrementalClassifier" : false,
+				"updateIncrementalClassifier" : true
+			},
+			"connections" : {
+				"batchClassifier" : [
+					"ClassifierPerformanceEvaluator_2"
+				]
+			},
+			"coordinates" : "359,197"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.Classifier",
+			"properties" : {
+				"classifier" : {
+					"type" : "optionHandler",
+					"class" : "weka.classifiers.functions.LibLINEAR",
+					"options" : "-S 1 -C 1.0 -E 0.001 -B 1.0 -L 0.1 -I 1000"
+				},
+				"loadClassifierFileName" : "",
+				"name" : "LibLINEAR",
+				"resetIncrementalClassifier" : false,
+				"updateIncrementalClassifier" : true
+			},
+			"connections" : {
+				"batchClassifier" : [
+					"ClassifierPerformanceEvaluator_3"
+				]
+			},
+			"coordinates" : "669,196"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.Loader",
+			"properties" : {
+				"loader" : {
+					"type" : "loader",
+					"class" : "weka.core.converters.ArffLoader",
+					"filePath" : "Desktop/BMP_Database_Duzenli/IR_128x128_Yeni/Validation_4000_10Fold/Test_and_Train_10Fold/Birlesik_IR_PB64x64.arff",
+					"useRelativePath" : true
+				},
+				"name" : "ArffLoader"
+			},
+			"connections" : {
+				"dataSet" : [
+					"Normalization"
+				]
+			},
+			"coordinates" : "35,21"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.ClassAssigner",
+			"properties" : {
+				"classColumn" : "class",
+				"name" : "ClassAssigner"
+			},
+			"connections" : {
+				"dataSet" : [
+					"ClassValuePicker"
+				]
+			},
+			"coordinates" : "246,21"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.ClassValuePicker",
+			"properties" : {
+				"classValue" : "1",
+				"name" : "ClassValuePicker"
+			},
+			"connections" : {
+				"dataSet" : [
+					"CrossValidationFoldMaker"
+				]
+			},
+			"coordinates" : "350,20"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.Classifier",
+			"properties" : {
+				"classifier" : {
+					"type" : "optionHandler",
+					"class" : "weka.classifiers.bayes.NaiveBayes",
+					"options" : ""
+				},
+				"loadClassifierFileName" : "",
+				"name" : "NaiveBayes",
+				"resetIncrementalClassifier" : false,
+				"updateIncrementalClassifier" : true
+			},
+			"connections" : {
+				"batchClassifier" : [
+					"ClassifierPerformanceEvaluator_1"
+				]
+			},
+			"coordinates" : "35,199"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.ClassifierPerformanceEvaluator",
+			"properties" : {
+				"errorPlotPointSizeProportionalToMargin" : false,
+				"evaluationMetricsToOutput" : "Correct,Incorrect,Kappa,Total cost,Average cost,KB relative,KB information,Correlation,Complexity 0,Complexity scheme,Complexity improvement,MAE,RMSE,RAE,RRSE,Coverage,Region size,TP rate,FP rate,Precision,Recall,F-measure,MCC,ROC area,PRC area",
+				"name" : "ClassifierPerformanceEvaluator_1"
+			},
+			"connections" : {
+				"text" : [
+					"Result_NaiveBayes"
+				]
+			},
+			"coordinates" : "149,197"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.ClassifierPerformanceEvaluator",
+			"properties" : {
+				"errorPlotPointSizeProportionalToMargin" : false,
+				"evaluationMetricsToOutput" : "Correct,Incorrect,Kappa,Total cost,Average cost,KB relative,KB information,Correlation,Complexity 0,Complexity scheme,Complexity improvement,MAE,RMSE,RAE,RRSE,Coverage,Region size,TP rate,FP rate,Precision,Recall,F-measure,MCC,ROC area,PRC area",
+				"name" : "ClassifierPerformanceEvaluator_2"
+			},
+			"connections" : {
+				"text" : [
+					"Result_RandomForest"
+				]
+			},
+			"coordinates" : "469,196"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.ClassifierPerformanceEvaluator",
+			"properties" : {
+				"errorPlotPointSizeProportionalToMargin" : false,
+				"evaluationMetricsToOutput" : "Correct,Incorrect,Kappa,Total cost,Average cost,KB relative,KB information,Correlation,Complexity 0,Complexity scheme,Complexity improvement,MAE,RMSE,RAE,RRSE,Coverage,Region size,TP rate,FP rate,Precision,Recall,F-measure,MCC,ROC area,PRC area",
+				"name" : "ClassifierPerformanceEvaluator_3"
+			},
+			"connections" : {
+				"text" : [
+					"Result_LibLINEAR (SVM)"
+				]
+			},
+			"coordinates" : "776,194"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.TextSaver",
+			"properties" : {
+				"append" : true,
+				"file" : "/Users/omeremreyetgin/Desktop/BMP_Database_Duzenli/IR_128x128_Yeni/Validation_4000_10Fold/Test_and_Train_10Fold/Seed1_NB_Birlesik_IR_PB64x64.txt",
+				"name" : "Result_NaiveBayes",
+				"writeTitleString" : true
+			},
+			"connections" : {
+			},
+			"coordinates" : "251,196"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.TextSaver",
+			"properties" : {
+				"append" : true,
+				"file" : "/Users/omeremreyetgin/Desktop/BMP_Database_Duzenli/IR_128x128_Yeni/Validation_4000_10Fold/Test_and_Train_10Fold/Seed1_RF_Birlesik_IR_PB64x64.txt",
+				"name" : "Result_RandomForest",
+				"writeTitleString" : true
+			},
+			"connections" : {
+			},
+			"coordinates" : "574,197"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.TextSaver",
+			"properties" : {
+				"append" : true,
+				"file" : "/Users/omeremreyetgin/Desktop/BMP_Database_Duzenli/IR_128x128_Yeni/Validation_4000_10Fold/Test_and_Train_10Fold/Seed1_SVM_Birlesik_IR_PB64x64.txt",
+				"name" : "Result_LibLINEAR (SVM)",
+				"writeTitleString" : false
+			},
+			"connections" : {
+			},
+			"coordinates" : "881,194"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.CrossValidationFoldMaker",
+			"properties" : {
+				"name" : "CrossValidationFoldMaker",
+				"numFolds" : "10",
+				"preserveOrder" : false,
+				"seed" : "1"
+			},
+			"connections" : {
+				"trainingSet" : [
+					"RandomForest",
+					"NaiveBayes",
+					"LibLINEAR"
+				],
+				"testSet" : [
+					"RandomForest",
+					"NaiveBayes",
+					"LibLINEAR"
+				]
+			},
+			"coordinates" : "469,21"
+		},
+		{
+			"class" : "weka.knowledgeflow.steps.Filter",
+			"properties" : {
+				"filter" : {
+					"type" : "optionHandler",
+					"class" : "weka.filters.unsupervised.instance.Normalize",
+					"options" : "-N 1.0 -L 2.0"
+				},
+				"name" : "Normalization"
+			},
+			"connections" : {
+				"dataSet" : [
+					"ClassAssigner"
+				]
+			},
+			"coordinates" : "147,22"
+		}
+	]
+}
